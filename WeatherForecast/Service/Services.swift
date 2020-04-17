@@ -12,8 +12,12 @@ import Alamofire
 
 let Appid = "95d190a434083879a6398aafd54d9e73"
 
+let defaultForecastDayCount = 5
+let defaultForecastUnit = "Metric"
+
 enum Services {
     case getWeatherByCity(cityName: String)
+    case getWeatherByGPS(lat: Double, lon: Double)
 
     var baseUrl: String {
         return "http://api.openweathermap.org/data/2.5/"
@@ -22,21 +26,21 @@ enum Services {
     var requestMeta: (method: Alamofire.HTTPMethod, path: String) {
         switch self {
         case .getWeatherByCity(let cityName):
-            return (.get, "forecast/daily?q=\(cityName)&cnt=5&appid=\(Appid)&units=Metric")
+            return (.get, "forecast/daily?q=\(cityName)&cnt=\(defaultForecastDayCount)&appid=\(Appid)&units=\(defaultForecastUnit)")
+        case .getWeatherByGPS(let lat, let lon):
+            return (.get, "forecast/daily?lat=\(lat)&lon=\(lon)cnt=\(defaultForecastDayCount)&appid=\(Appid)&units=\(defaultForecastUnit)")
         }
     }
 
-    func request() {
+    func request(successHandler: ((Data) -> Void)?, failHandler: ((NetworkError) -> Void)?) {
         let url = URL(string: baseUrl + requestMeta.path)
 
         AF.request(url!, method: requestMeta.0).responseData { (response) in
-            print(response)
-            do {
-                let model = try JSONDecoder().decode(WeatherModel.self, from: response.data!)
-                print(model)
-            } catch let err {
-                print(err)
+            guard let data = response.data else {
+                failHandler?(.dataEmpty)
+                return
             }
+            successHandler?(data)
         }
     }
 }

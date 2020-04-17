@@ -8,6 +8,22 @@
 
 import UIKit
 
-class WeatherOperationError: NSObject {
+enum WeatherOperationError: Error {
+    case cityFormatError
+    case cityEmpty
+    case networkError(error: NetworkError)
+    case parseError(error: ParseError)
 
+    var localizedDescription: String {
+        switch self {
+        case .cityFormatError:
+            return "City format is wrong"
+        case .cityEmpty:
+            return "City can not be empty"
+        case .networkError(_):
+            return "Server error, please try again"
+        case .parseError(_):
+            return "Parser error, please try again"
+        }
+    }
 }

@@ -8,10 +8,13 @@
 
 import UIKit
 import SnapKit
+import Toast_Swift
 
 class WeatherViewController: UIViewController {
+    //MARK: - Defination
 
-   let padding = 20
+    let padding = 20
+
     //MARK: - UI Elements
     lazy var cityLabel: WLabel = {
         let lbl = WLabel(frame: CGRect.zero)
@@ -40,10 +43,23 @@ class WeatherViewController: UIViewController {
         return tb
     }()
 
+    //MARK: - Property
+    var viewModel: WeatherViewModel!
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         layoutUI()
+
+        viewModel = WeatherViewModel()
+
+        LocationManager.shared.startPositioning()
+        LocationManager.shared.locationHandler = { (location) in
+            
+        }
+
+        bindOutput()
+
     }
 
     //MARK: - init methods
@@ -65,6 +81,7 @@ class WeatherViewController: UIViewController {
             make.width.equalTo(100)
             make.height.equalTo(30)
         }
+        searchButton.addTarget(self, action: #selector(searchTapped), for: .touchUpInside)
 
         view.addSubview(cityTextField)
         cityTextField.snp.makeConstraints { (make) in
@@ -73,8 +90,36 @@ class WeatherViewController: UIViewController {
             make.trailing.equalTo(searchButton.snp.leading).offset(-padding)
             make.height.equalTo(searchButton.snp.height)
         }
+    }
 
-        Services.getWeatherByCity(cityName: "Shanghai").request()
+    func bindOutput() {
+        viewModel.showHubHandler = { [unowned self] in
+            self.view.makeToastActivity(.center)
+        }
+
+        viewModel.hideHubHandler = { [unowned self] in
+            self.view.hideToastActivity()
+        }
+
+        viewModel.errorHandler = { [unowned self] (error) in
+            self.view.makeToast(error.localizedDescription, duration: 1)
+            switch error {
+            case .cityEmpty, .cityFormatError:
+                self.cityTextField.text = ""
+            case .networkError, .parseError:
+                break
+            }
+        }
+
+        viewModel.updateWeather = { [unowned self] (model) in
+            print(model)
+        }
+    }
+
+    //MARK: - UI Events
+    @objc
+    func searchTapped() {
+        viewModel.searchCityWeather(city: cityTextField.text)
     }
 
 }

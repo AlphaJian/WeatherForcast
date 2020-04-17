@@ -8,6 +8,8 @@
 
 import UIKit
 
-class StringExtension: NSObject {
-
+extension String {
+    var isAlphabetic: Bool {
+        return !isEmpty && range(of: "[^a-zA-Z ]", options: .regularExpression) == nil
+    }
 }
