@@ -1,0 +1,14 @@
+# Pod-file
+source 'https://github.com/CocoaPods/Specs.git'  
+platform :ios, "10.0"
+use_frameworks!  
+
+target ‘WeatherForecast’ do
+    pod 'Alamofire', '~> 5.1'
+    pod 'SnapKit',    '~> 4.0.0'
+    pod 'Toast-Swift', '~> 5.0.0'
+end
+
+target 'WeatherForecastTests' do 
+
+end
