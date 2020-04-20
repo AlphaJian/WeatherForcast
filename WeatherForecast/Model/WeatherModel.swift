@@ -9,6 +9,7 @@
 import UIKit
 
 struct WeatherModel: Codable {
+    var city: City?
     var list: [WeatherItem]?
 }
 
@@ -20,6 +21,10 @@ struct WeatherItem: Codable {
         case dayTime = "dt"
         case temp = "temp"
     }
+}
+
+struct City: Codable {
+    var name: String?
 }
 
 extension WeatherItem {

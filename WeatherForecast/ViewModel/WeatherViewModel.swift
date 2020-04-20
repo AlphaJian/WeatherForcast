@@ -8,27 +8,6 @@
 
 import UIKit
 
-enum WeatherUnit: String {
-    case kelvin = "Kelvin"
-    case celsius = "Celsuis"
-    case fahrenheit = "Fahrenheit"
-    
-    var desc: String {
-        return self.rawValue
-    }
-    
-    var unit: String {
-        switch self {
-        case .kelvin:
-            return "K"
-        case .celsius:
-            return "℃"
-        case .fahrenheit:
-            return "℉"
-        }
-    }
-}
-
 class WeatherViewModel {
     //MARK: - property
     private var weatherModel: WeatherModel?
@@ -59,14 +38,14 @@ class WeatherViewModel {
     //MARK: - output
     var errorHandler: ((WeatherOperationError) -> Void)?
 
-    var updateWeather: (() -> Void)?
+    var updateWeather: ((WeatherModel?) -> Void)?
 
     var showHubHandler: (() -> Void)?
     var hideHubHandler: (() -> Void)?
 
     //MARK: - input
     func searchCityWeather(city: String?) {
-        guard let city = city else {
+        guard let city = city?.removeSpace() else {
             errorHandler?(.cityEmpty)
             return 
         }
@@ -75,7 +54,7 @@ class WeatherViewModel {
         case .success(let city):
             Business.requestWeatherByCity(city: city, successHandler: { [unowned self] (model) in
                 self.weatherModel = model
-                self.updateWeather?()
+                self.updateWeather?(model)
             }, failHandler: { [unowned self] (error) in
                 self.handleError(error: error)
             })
@@ -86,14 +65,15 @@ class WeatherViewModel {
     
     func setWeatherUnit(index: Int) {
         weatherUnit = unitSelections[index]
-        if let model = weatherModel, let count = model.list?.count, count > 0 {
-            updateWeather?()
-        }
+        updateWeather?(weatherModel)
      }
 
 
     //MARK: - private function
     func checkCityFormat(city: String) -> Result<String, WeatherOperationError> {
+        if city == "" {
+            return .failure(.cityEmpty)
+        }
         if city.isAlphabetic {
             return .success(city)
         } else {

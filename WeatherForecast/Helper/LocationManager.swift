@@ -90,6 +90,8 @@ extension LocationManager: CLLocationManagerDelegate {
 
             if let place = placemarks?[0], let city = place.locality, !city.isEmpty {
                 self?.locationHandler?((city, CoordinateModel(latitude: location.coordinate.latitude, lontitude: location.coordinate.longitude)))
+                //  get location only once
+                self?.locationManager?.stopUpdatingLocation()
             }
         }
     }

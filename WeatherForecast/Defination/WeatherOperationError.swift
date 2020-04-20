@@ -20,8 +20,13 @@ enum WeatherOperationError: Error {
             return "City format is wrong"
         case .cityEmpty:
             return "City can not be empty"
-        case .networkError(_):
-            return "Server error, please try again"
+        case .networkError(let err):
+            switch err {
+            case .cityNotExist:
+                return "City not found"
+            case .dataEmpty, .others:
+                return "Server error, please try again"
+            }
         case .parseError(_):
             return "Parser error, please try again"
         }

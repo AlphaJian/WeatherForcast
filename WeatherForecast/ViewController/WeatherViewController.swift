@@ -136,7 +136,7 @@ class WeatherViewController: UIViewController {
             }
         }
 
-        viewModel.updateWeather = { [unowned self] in
+        viewModel.updateWeather = { [unowned self] (_) in
             DispatchQueue.main.async {
                 self.weatherTableView.reloadData()
             }

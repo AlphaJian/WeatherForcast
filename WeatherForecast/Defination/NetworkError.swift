@@ -8,4 +8,6 @@
 
 enum NetworkError: Error {
     case dataEmpty
+    case cityNotExist
+    case others(err: Error)
 }

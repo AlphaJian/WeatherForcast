@@ -12,4 +12,8 @@ extension String {
     var isAlphabetic: Bool {
         return !isEmpty && range(of: "[^a-zA-Z ]", options: .regularExpression) == nil
     }
+    
+    func removeSpace() -> String {
+        return self.replacingOccurrences(of: " ", with: "")
+    }
 }
