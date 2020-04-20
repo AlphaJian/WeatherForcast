@@ -22,6 +22,14 @@ struct WeatherItem: Codable {
     }
 }
 
+extension WeatherItem {
+    var strDay: String {
+        Date.getStringFromTimeStamp(timeStamp: dayTime)
+    }
+}
+
 struct WeatherTemp: Codable {
     var day: Float?
+    var min: Float?
+    var max: Float?
 }

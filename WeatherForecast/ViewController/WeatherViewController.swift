@@ -19,7 +19,7 @@ class WeatherViewController: UIViewController {
     lazy var cityLabel: WLabel = {
         let lbl = WLabel(frame: CGRect.zero)
         lbl.text = "Please input your city name:"
-
+        lbl.textAlignment = .left
         return lbl
     }()
 
@@ -36,10 +36,20 @@ class WeatherViewController: UIViewController {
 
         return btn
     }()
+    
+    lazy var selectionView: UISegmentedControl = {
+        let control = UISegmentedControl(items: viewModel.unitSelections.map{$0.rawValue})
+        control.selectedSegmentIndex = 0
+        return control
+    }()
 
     lazy var weatherTableView: UITableView = {
         let tb = UITableView(frame: CGRect.zero, style: .plain)
-
+        
+        tb.register(WeatherForecastTableViewCell.self, forCellReuseIdentifier: WeatherForecastTableViewCell.identifier)
+        tb.dataSource = self
+        tb.delegate = self
+        
         return tb
     }()
 
@@ -49,9 +59,9 @@ class WeatherViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        layoutUI()
-
         viewModel = WeatherViewModel()
+
+        layoutUI()
 
         LocationManager.shared.startPositioning()
         LocationManager.shared.locationHandler = { (location) in
@@ -90,6 +100,21 @@ class WeatherViewController: UIViewController {
             make.trailing.equalTo(searchButton.snp.leading).offset(-padding)
             make.height.equalTo(searchButton.snp.height)
         }
+        
+        view.addSubview(selectionView)
+        selectionView.snp.makeConstraints { (make) in
+            make.top.equalTo(cityTextField.snp.bottom).offset(padding)
+            make.leading.equalTo(cityLabel.snp.leading)
+            make.trailing.equalTo(searchButton.snp.trailing)
+            make.height.equalTo(30)
+        }
+        selectionView.addTarget(self, action: #selector(unitSelected(sender:)), for: .valueChanged)
+        
+        view.addSubview(weatherTableView)
+        weatherTableView.snp.makeConstraints { (make) in
+            make.leading.trailing.bottom.equalToSuperview()
+            make.top.equalTo(selectionView.snp.bottom).offset(padding)
+        }
     }
 
     func bindOutput() {
@@ -111,8 +136,10 @@ class WeatherViewController: UIViewController {
             }
         }
 
-        viewModel.updateWeather = { [unowned self] (model) in
-            print(model)
+        viewModel.updateWeather = { [unowned self] in
+            DispatchQueue.main.async {
+                self.weatherTableView.reloadData()
+            }
         }
     }
 
@@ -121,5 +148,33 @@ class WeatherViewController: UIViewController {
     func searchTapped() {
         viewModel.searchCityWeather(city: cityTextField.text)
     }
+    
+    @objc func unitSelected(sender: UISegmentedControl) {
+        viewModel.setWeatherUnit(index: sender.selectedSegmentIndex)
+    }
+}
 
+extension WeatherViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return viewModel.weatherForecastCount
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: WeatherForecastTableViewCell.identifier, for: indexPath) as! WeatherForecastTableViewCell
+        
+        cell.setModel(model: viewModel.weatherForecastDataSource[indexPath.row])
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let view = WeatherForecastTableViewHeader(frame: CGRect(x: 0, y: 0, width: self.view.bounds.size.width, height: 30))
+        view.setUnit(unit: viewModel!.weatherUnit.unit)
+        view.backgroundColor = UIColor.gray
+        return view
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 30
+    }
 }

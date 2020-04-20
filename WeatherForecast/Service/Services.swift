@@ -36,6 +36,7 @@ enum Services {
         let url = URL(string: baseUrl + requestMeta.path)
 
         AF.request(url!, method: requestMeta.0).responseData { (response) in
+            print(response)
             guard let data = response.data else {
                 failHandler?(.dataEmpty)
                 return

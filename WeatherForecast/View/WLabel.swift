@@ -15,7 +15,7 @@ class WLabel: UILabel {
 
         textColor = UIColor.black
         font = UIFont.systemFont(ofSize: 14)
-        textAlignment = .left
+        textAlignment = .center
     }
 
     required init?(coder: NSCoder) {
