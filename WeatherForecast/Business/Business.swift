@@ -28,6 +28,25 @@ class Business {
             failHandler?(error)
         }
     }
+
+    static func requestWeatherByGPS(lat: Double, lon: Double, successHandler: ((WeatherModel) -> Void)?, failHandler: ((Error) -> Void)?) {
+        Services.getWeatherByGPS(lat: lat, lon: lon).request(successHandler: { (data) in
+            let result = handleServerError(response: data)
+            switch result {
+            case .success(let data):
+                do {
+                    let model = try JSONDecoder().decode(WeatherModel.self, from: data)
+                    successHandler?(model)
+                } catch let err {
+                    failHandler?(ParseError.decodeError(error: err))
+                }
+            case .failure(let error):
+                failHandler?(error)
+            }
+        }) { (error) in
+            failHandler?(error)
+        }
+    }
     
     private static func handleServerError(response: Data?) -> Result<Data, NetworkError> {
         guard let data = response else {

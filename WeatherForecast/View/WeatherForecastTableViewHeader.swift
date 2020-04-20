@@ -8,6 +8,9 @@
 
 import UIKit
 
+let dayWidth: CGFloat = 120.0
+let tempWidth = (UIScreen.main.bounds.size.width - dayWidth) / 3
+
 class WeatherForecastTableViewHeader: UIView {
 
     lazy var dayLabel: WLabel = {
@@ -37,28 +40,28 @@ class WeatherForecastTableViewHeader: UIView {
         addSubview(dayLabel)
         dayLabel.snp.makeConstraints { (make) in
             make.leading.top.bottom.equalToSuperview()
-            make.width.equalTo(120)
+            make.width.equalTo(dayWidth)
         }
         
         addSubview(tempLabel)
         tempLabel.snp.makeConstraints { (make) in
             make.top.bottom.equalToSuperview()
             make.leading.equalTo(dayLabel.snp.trailing)
-            make.width.equalTo(100)
+            make.width.equalTo(tempWidth)
         }
         
         addSubview(minTempLabel)
         minTempLabel.snp.makeConstraints { (make) in
             make.top.bottom.equalToSuperview()
             make.leading.equalTo(tempLabel.snp.trailing)
-            make.width.equalTo(100)
+            make.width.equalTo(tempWidth)
         }
         
         addSubview(maxTempLabel)
         maxTempLabel.snp.makeConstraints { (make) in
             make.top.bottom.equalToSuperview()
             make.leading.equalTo(minTempLabel.snp.trailing)
-            make.width.equalTo(100)
+            make.width.equalTo(tempWidth)
         }
     }
     

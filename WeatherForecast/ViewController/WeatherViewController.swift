@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Toast_Swift
 
-class WeatherViewController: UIViewController {
+class WeatherViewController: BaseViewController {
     //MARK: - Defination
 
     let padding = 20
@@ -27,6 +27,8 @@ class WeatherViewController: UIViewController {
         let textField = UITextField(frame: CGRect.zero)
         textField.placeholder = "city name"
         textField.borderStyle = .line
+        textField.text = viewModel.defaultCity
+
         return textField
     }()
 
@@ -63,12 +65,8 @@ class WeatherViewController: UIViewController {
 
         layoutUI()
 
-        LocationManager.shared.startPositioning()
-        LocationManager.shared.locationHandler = { (location) in
-            
-        }
-
         bindOutput()
+        viewModel.searchCityWeather(city: viewModel.defaultCity)
 
     }
 
@@ -136,8 +134,12 @@ class WeatherViewController: UIViewController {
             }
         }
 
-        viewModel.updateWeather = { [unowned self] (_) in
+        viewModel.updateWeather = { [unowned self] (model) in
             DispatchQueue.main.async {
+                if self.cityTextField.text == "" {
+                    //  enter city name if reqeusted by gps
+                    self.cityTextField.text = model?.city?.name ?? ""
+                }
                 self.weatherTableView.reloadData()
             }
         }
@@ -146,6 +148,7 @@ class WeatherViewController: UIViewController {
     //MARK: - UI Events
     @objc
     func searchTapped() {
+        cityTextField.resignFirstResponder()
         viewModel.searchCityWeather(city: cityTextField.text)
     }
     
