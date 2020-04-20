@@ -25,7 +25,7 @@ class WeatherModelTests: XCTestCase {
 
     func test() {
         if let model = try? JSONDecoder().decode(WeatherModel.self, from: data) {
-            XCTAssertEqual(model.city!.name, "shanghai")
+            XCTAssertEqual(model.city!.name, "Shanghai")
 
             XCTAssertEqual(model.list!.count, 5)
             XCTAssertEqual(model.list![0].dayTime, 1587265200)

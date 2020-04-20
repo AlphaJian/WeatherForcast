@@ -28,7 +28,7 @@ enum Services {
         case .getWeatherByCity(let cityName):
             return (.get, "forecast/daily?q=\(cityName)&cnt=\(defaultForecastDayCount)&appid=\(Appid)&units=\(defaultForecastUnit)")
         case .getWeatherByGPS(let lat, let lon):
-            return (.get, "forecast/daily?lat=\(lat)&lon=\(lon)cnt=\(defaultForecastDayCount)&appid=\(Appid)&units=\(defaultForecastUnit)")
+            return (.get, "forecast/daily?lat=\(lat)&lon=\(lon)&cnt=\(defaultForecastDayCount)&appid=\(Appid)&units=\(defaultForecastUnit)")
         }
     }
 

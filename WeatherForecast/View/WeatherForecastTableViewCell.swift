@@ -25,7 +25,7 @@ class WeatherForecastTableViewCell: UITableViewCell {
         dayTimeLabel.snp.makeConstraints { (make) in
             make.centerY.equalToSuperview()
             make.leading.equalToSuperview()
-            make.width.equalTo(120)
+            make.width.equalTo(dayWidth)
             make.height.equalTo(30)
         }
         
@@ -33,7 +33,7 @@ class WeatherForecastTableViewCell: UITableViewCell {
         tempLabel.snp.makeConstraints { (make) in
             make.centerY.equalToSuperview()
             make.leading.equalTo(dayTimeLabel.snp.trailing)
-            make.width.equalTo(100)
+            make.width.equalTo(tempWidth)
             make.height.equalTo(30)
         }
         
@@ -41,7 +41,7 @@ class WeatherForecastTableViewCell: UITableViewCell {
         tempMinLabel.snp.makeConstraints { (make) in
             make.centerY.equalToSuperview()
             make.leading.equalTo(tempLabel.snp.trailing)
-            make.width.equalTo(100)
+            make.width.equalTo(tempWidth)
             make.height.equalTo(30)
         }
         
@@ -49,7 +49,7 @@ class WeatherForecastTableViewCell: UITableViewCell {
         tempMaxLabel.snp.makeConstraints { (make) in
             make.centerY.equalToSuperview()
             make.leading.equalTo(tempMinLabel.snp.trailing)
-            make.width.equalTo(100)
+            make.width.equalTo(tempWidth)
             make.height.equalTo(30)
         }
     }

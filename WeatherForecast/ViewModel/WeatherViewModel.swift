@@ -13,9 +13,13 @@ class WeatherViewModel {
     private var weatherModel: WeatherModel?
     
     private(set) var weatherUnit: WeatherUnit = .celsius
-    
+
     var weatherForecastCount: Int {
         return weatherModel?.list?.count ?? 0
+    }
+
+    var defaultCity: String {
+        return "Shang hai"
     }
     
     var weatherForecastDataSource: [WeatherForecastCellModel] {
@@ -52,10 +56,13 @@ class WeatherViewModel {
         let checkResult = checkCityFormat(city: city)
         switch checkResult {
         case .success(let city):
+            showHubHandler?()
             Business.requestWeatherByCity(city: city, successHandler: { [unowned self] (model) in
+                self.hideHubHandler?()
                 self.weatherModel = model
                 self.updateWeather?(model)
             }, failHandler: { [unowned self] (error) in
+                self.hideHubHandler?()
                 self.handleError(error: error)
             })
         case .failure(let error):
